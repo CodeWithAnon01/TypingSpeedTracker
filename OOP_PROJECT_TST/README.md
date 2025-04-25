@@ -19,7 +19,6 @@ This project is developed as part of the Object-Oriented Programming (OOP) cours
   - **Hard Mode**: Advanced typing texts focused on complex technical topics like machine learning, cybersecurity, and programming.
 - **Dynamic Paragraph Selection**: Selects a random paragraph from a pool of 10 predefined paragraphs.
 - **User Feedback**: Provides real-time feedback on performance, including WPM, CPM, accuracy, and mistakes made.
-- **Restart Functionality**: Allows users to restart the typing session by pressing the "R" key.
 - **Resizing Support**: The application supports dynamic resizing of the window, adjusting the layout accordingly.
 - **Polymorphic Typing Modes**: Uses polymorphism to allow the different typing modes (Easy, Medium, Hard) to implement specific behavior.
 
