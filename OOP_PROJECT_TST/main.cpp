@@ -4,10 +4,11 @@
 #include <cstdlib>
 #include <cstring>
 
-// Base class for different text modes
-class TextMode {
+// Base class / parent class
+class TextMode
+{
 protected:
-    const char* text;
+    const char *text;
     int textLength;
     int currentPosition;
     int mistakes;
@@ -15,7 +16,7 @@ protected:
     bool isTyping;
     bool isTimeUp;
     bool isStarted;
-    const char* paragraphs[10];
+    const char *paragraphs[10];
     int currentParagraph;
     float finalWPM;
     float finalCPM;
@@ -24,14 +25,15 @@ protected:
     float completionTime;
 
 public:
-    TextMode() : currentPosition(0), mistakes(0), startTime(0), isTyping(false), 
-                isTimeUp(false), isStarted(false), currentParagraph(0),
-                finalWPM(0), finalCPM(0), finalAccuracy(0), isCompleted(false),
-                completionTime(0) {
+    TextMode() : currentPosition(0), mistakes(0), startTime(0), isTyping(false),
+                 isTimeUp(false), isStarted(false), currentParagraph(0),
+                 finalWPM(0), finalCPM(0), finalAccuracy(0), isCompleted(false),
+                 completionTime(0)
+    {
     }
     virtual ~TextMode() {}
 
-    virtual const char* getText() { return text; }
+    virtual const char *getText() { return text; }
     virtual int getLength() { return textLength; }
     virtual int getCurrentPosition() { return currentPosition; }
     virtual int getMistakes() { return mistakes; }
@@ -42,8 +44,10 @@ public:
     virtual bool getIsCompleted() { return isCompleted; }
     virtual float getCompletionTime() { return completionTime; }
 
-    virtual void startTyping() {
-        if (!isTyping && isStarted) {
+    virtual void startTyping()
+    {
+        if (!isTyping && isStarted)
+        {
             isTyping = true;
             startTime = GetTime();
             isTimeUp = false;
@@ -52,53 +56,71 @@ public:
         }
     }
 
-    virtual void checkInput(int key) {
-        if (!isTyping || isTimeUp || !isStarted || isCompleted) return;
+    virtual void checkInput(int key)
+    {
+        if (!isTyping || isTimeUp || !isStarted || isCompleted)
+            return;
 
-        if (key == text[currentPosition]) {
+        if (key == text[currentPosition])
+        {
             currentPosition++;
-            if (currentPosition >= textLength) {
+            if (currentPosition >= textLength)
+            {
                 isCompleted = true;
                 completionTime = GetTime() - startTime;
                 calculateFinalStats();
             }
-        } else {
+        }
+        else
+        {
             mistakes++;
         }
     }
 
-    virtual void calculateFinalStats() {
+    virtual void calculateFinalStats()
+    {
         float timeInMinutes = completionTime / 60.0f;
         finalWPM = (currentPosition / 5.0f) / timeInMinutes;
         finalCPM = currentPosition / timeInMinutes;
         finalAccuracy = ((float)currentPosition / (currentPosition + mistakes)) * 100;
     }
 
-    virtual bool isComplete() {
+    virtual bool isComplete()
+    {
         return isCompleted || isTimeUp;
     }
 
-    virtual float getWPM() {
-        if (!isTyping || !isStarted) return 0;
-        if (isCompleted || isTimeUp) return finalWPM;
+    virtual float getWPM()
+    {
+        if (!isTyping || !isStarted)
+            return 0;
+        if (isCompleted || isTimeUp)
+            return finalWPM;
         float timeInMinutes = (GetTime() - startTime) / 60.0f;
         return (currentPosition / 5.0f) / timeInMinutes;
     }
 
-    virtual float getCPM() {
-        if (!isTyping || !isStarted) return 0;
-        if (isCompleted || isTimeUp) return finalCPM;
+    virtual float getCPM()
+    {
+        if (!isTyping || !isStarted)
+            return 0;
+        if (isCompleted || isTimeUp)
+            return finalCPM;
         float timeInMinutes = (GetTime() - startTime) / 60.0f;
         return currentPosition / timeInMinutes;
     }
 
-    virtual float getAccuracy() {
-        if (currentPosition + mistakes == 0) return 100;
-        if (isCompleted || isTimeUp) return finalAccuracy;
+    virtual float getAccuracy()
+    {
+        if (currentPosition + mistakes == 0)
+            return 100;
+        if (isCompleted || isTimeUp)
+            return finalAccuracy;
         return ((float)currentPosition / (currentPosition + mistakes)) * 100;
     }
 
-    virtual void selectRandomParagraph() {
+    virtual void selectRandomParagraph()
+    {
         currentParagraph = rand() % 10;
         text = paragraphs[currentParagraph];
         textLength = strlen(text);
@@ -114,10 +136,13 @@ public:
         completionTime = 0;
     }
 
-    virtual void updateTimer() {
-        if (isTyping && !isTimeUp && isStarted && !isCompleted) {
+    virtual void updateTimer()
+    {
+        if (isTyping && !isTimeUp && isStarted && !isCompleted)
+        {
             float elapsedTime = GetTime() - startTime;
-            if (elapsedTime >= 30.0f) {
+            if (elapsedTime >= 30.0f)
+            {
                 isTimeUp = true;
                 completionTime = 30.0f;
                 calculateFinalStats();
@@ -125,23 +150,28 @@ public:
         }
     }
 
-    virtual float getRemainingTime() {
-        if (!isTyping || !isStarted || isCompleted) return 30.0f;
-        if (isTimeUp) return 0;
+    virtual float getRemainingTime()
+    {
+        if (!isTyping || !isStarted || isCompleted)
+            return 30.0f;
+        if (isTimeUp)
+            return 0;
         float elapsedTime = GetTime() - startTime;
         return (30.0f - elapsedTime) > 0 ? (30.0f - elapsedTime) : 0;
     }
 
-    virtual void startGame() {
+    virtual void startGame()
+    {
         isStarted = true;
         startTyping();
     }
 };
 
-// Easy mode class
-class EasyMode : public TextMode {
+class EasyMode : public TextMode
+{
 public:
-    EasyMode() {
+    EasyMode()
+    {
         paragraphs[0] = "The quick brown fox jumps over the lazy dog. This is a simple test for typing speed. Learning to type quickly and accurately is an important skill. The sun rises in the east and sets in the west. Practice makes perfect in everything we do.";
         paragraphs[1] = "A good typing speed helps you work more efficiently. The keyboard is your tool for digital communication. Typing is a skill that everyone should learn. Computers are powerful tools in our daily lives. Speed and accuracy are both important when typing.";
         paragraphs[2] = "The internet has changed how we work and communicate. Good typing skills are essential for success. Computers are everywhere in our modern world. Being able to type well makes everything easier. Practice every day to improve your skills.";
@@ -156,10 +186,11 @@ public:
     }
 };
 
-// Medium mode class
-class MediumMode : public TextMode {
+class MediumMode : public TextMode
+{
 public:
-    MediumMode() {
+    MediumMode()
+    {
         paragraphs[0] = "Programming creates computer instructions using various languages. Each language has unique syntax and rules. Understanding these rules is essential for coding. Practice helps develop programming skills. Good programmers write clean, efficient code.";
         paragraphs[1] = "Computer science studies computers and computational systems. It combines theory and practical applications. Computer scientists develop new technologies. The field evolves with new innovations. Understanding CS is vital for modern technology.";
         paragraphs[2] = "Algorithms are step-by-step problem-solving procedures. They are fundamental to programming. Good algorithms are efficient and correct. Understanding algorithms improves coding skills. Many problems use standard algorithms.";
@@ -174,10 +205,11 @@ public:
     }
 };
 
-// Hard mode class
-class HardMode : public TextMode {
+class HardMode : public TextMode
+{
 public:
-    HardMode() {
+    HardMode()
+    {
         paragraphs[0] = "OOP utilizes encapsulation, inheritance, and polymorphism. Classes define object types and behaviors. Inheritance creates hierarchical relationships. Polymorphism enables flexible object handling. Abstraction hides complex details.";
         paragraphs[1] = "Machine learning processes vast datasets, identifying patterns. Deep learning excels at image recognition. NLP analyzes linguistic structures. Reinforcement learning optimizes decisions. These technologies revolutionize automation.";
         paragraphs[2] = "Quantum computing uses superposition and entanglement. Qubits exist in multiple states. Quantum algorithms solve problems faster. Decoherence challenges quantum states. Error correction mitigates quantum noise.";
@@ -192,10 +224,10 @@ public:
     }
 };
 
-// Typing tracker class
-class TypingTracker {
+class TypingTracker
+{
 private:
-    TextMode* currentMode;
+    TextMode *currentMode;
     int selectedMode;
     int screenWidth;
     int screenHeight;
@@ -211,49 +243,48 @@ private:
     int visibleLines;
 
 public:
-    TypingTracker() : selectedMode(0), screenWidth(800), screenHeight(600), 
-                     scaleFactor(1.0f), fontSize(20), lineHeight(30), margin(20),
-                     textAreaWidth(0), textAreaHeight(0), textY(0), maxVisibleLines(0),
-                     currentScroll(0), visibleLines(0) {
+    TypingTracker() : selectedMode(0), screenWidth(800), screenHeight(600),
+                      scaleFactor(1.0f), fontSize(20), lineHeight(30), margin(20),
+                      textAreaWidth(0), textAreaHeight(0), textY(0), maxVisibleLines(0),
+                      currentScroll(0), visibleLines(0)
+    {
         srand(time(NULL));
         currentMode = new EasyMode();
     }
 
-    ~TypingTracker() {
+    ~TypingTracker()
+    {
         delete currentMode;
     }
 
-    void updateScreenSize(int width, int height) {
+    void updateScreenSize(int width, int height)
+    {
         screenWidth = width;
         screenHeight = height;
         scaleFactor = (float)screenWidth / 800.0f;
-        
-        // Calculate text area dimensions
+
         int scaledMargin = (int)(margin * scaleFactor);
         int buttonHeight = (int)(50 * scaleFactor);
         int startButtonHeight = (int)(40 * scaleFactor);
         int statsHeight = (int)(120 * scaleFactor);
         int scaledLineHeight = (int)(lineHeight * scaleFactor);
-        
-        // Calculate heights of different sections
+
         int topSectionHeight = scaledMargin + buttonHeight + scaledMargin + startButtonHeight + scaledMargin;
         int bottomSectionHeight = statsHeight + scaledMargin;
         int availableHeight = screenHeight - (topSectionHeight + bottomSectionHeight);
-        
-        // Calculate text area
+
         textAreaWidth = screenWidth - (2 * scaledMargin);
         textAreaHeight = availableHeight;
-        
-        // Calculate text starting position
-        textY = topSectionHeight + (availableHeight / 4); // Position text in the middle of available space
-        
-        // Calculate maximum visible lines
+
+        textY = topSectionHeight + (availableHeight / 4);
+
         maxVisibleLines = textAreaHeight / scaledLineHeight;
         visibleLines = maxVisibleLines;
     }
 
-    void draw() {
-        // Calculate scaled positions
+    void draw()
+    {
+
         int scaledMargin = (int)(margin * scaleFactor);
         int buttonWidth = (int)(200 * scaleFactor);
         int buttonHeight = (int)(50 * scaleFactor);
@@ -263,7 +294,6 @@ public:
         int scaledFontSize = (int)(fontSize * scaleFactor);
         int scaledLineHeight = (int)(lineHeight * scaleFactor);
 
-        // Draw mode selection buttons
         int buttonY = scaledMargin;
         DrawRectangle(scaledMargin, buttonY, buttonWidth, buttonHeight, LIGHTGRAY);
         DrawRectangle(scaledMargin + buttonWidth + buttonSpacing, buttonY, buttonWidth, buttonHeight, LIGHTGRAY);
@@ -273,19 +303,16 @@ public:
         DrawText("Medium", scaledMargin + buttonWidth + buttonSpacing + 70, buttonY + 15, scaledFontSize, selectedMode == 1 ? RED : BLACK);
         DrawText("Hard", scaledMargin + 2 * (buttonWidth + buttonSpacing) + 70, buttonY + 15, scaledFontSize, selectedMode == 2 ? RED : BLACK);
 
-        // Draw start button
         int startButtonY = buttonY + buttonHeight + scaledMargin;
         DrawRectangle(scaledMargin, startButtonY, startButtonWidth, startButtonHeight, LIGHTGRAY);
         DrawText("Start", scaledMargin + 20, startButtonY + 10, scaledFontSize, BLACK);
 
-        // Draw timer
         char timerText[20];
         sprintf(timerText, "Time: %.1f", currentMode->getRemainingTime());
-        DrawText(timerText, scaledMargin, startButtonY + startButtonHeight + scaledMargin, 
-                scaledFontSize, currentMode->getRemainingTime() < 5.0f ? RED : BLACK);
+        DrawText(timerText, scaledMargin, startButtonY + startButtonHeight + scaledMargin,
+                 scaledFontSize, currentMode->getRemainingTime() < 5.0f ? RED : BLACK);
 
-        // Draw the text to type with wrapping
-        const char* text = currentMode->getText();
+        const char *text = currentMode->getText();
         int pos = currentMode->getCurrentPosition();
         int currentLine = 0;
         int currentX = scaledMargin;
@@ -294,42 +321,52 @@ public:
         int wordEnd = 0;
         bool inWord = false;
 
-        // Draw text in a single pass
-        for (int i = 0; i <= strlen(text); i++) {
-            if (text[i] == ' ' || text[i] == '\0') {
-                if (inWord) {
+        for (int i = 0; i <= strlen(text); i++)
+        {
+            if (text[i] == ' ' || text[i] == '\0')
+            {
+                if (inWord)
+                {
                     wordEnd = i;
-                    const char* word = TextSubtext(text, wordStart, wordEnd - wordStart);
+                    const char *word = TextSubtext(text, wordStart, wordEnd - wordStart);
                     int wordWidth = MeasureText(word, scaledFontSize);
-                    
-                    if (currentX + wordWidth > screenWidth - scaledMargin) {
+
+                    if (currentX + wordWidth > screenWidth - scaledMargin)
+                    {
                         currentX = scaledMargin;
                         currentY += scaledLineHeight;
                         currentLine++;
                     }
 
-                    // Determine color based on position
                     Color wordColor;
-                    if (wordEnd <= pos) {
-                        wordColor = GREEN;  // Already typed
-                    } else if (wordStart <= pos && pos < wordEnd) {
-                        wordColor = BLUE;   // Current word
-                    } else {
-                        wordColor = GRAY;   // Upcoming text
+                    if (wordEnd <= pos)
+                    {
+                        wordColor = GREEN; // Already typed
                     }
-                    
+                    else if (wordStart <= pos && pos < wordEnd)
+                    {
+                        wordColor = BLUE; // Current word
+                    }
+                    else
+                    {
+                        wordColor = GRAY; // Upcoming text
+                    }
+
                     DrawText(word, currentX, currentY, scaledFontSize, wordColor);
                     currentX += wordWidth + MeasureText(" ", scaledFontSize);
                     inWord = false;
                 }
-            } else if (!inWord) {
+            }
+            else if (!inWord)
+            {
                 wordStart = i;
                 inWord = true;
             }
         }
 
         // Draw statistics
-        if (currentMode->getIsTyping() && currentMode->getIsStarted()) {
+        if (currentMode->getIsTyping() && currentMode->getIsStarted())
+        {
             char wpmText[50];
             char cpmText[50];
             char accuracyText[50];
@@ -348,10 +385,12 @@ public:
         }
     }
 
-    void handleInput() {
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    void handleInput()
+    {
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
             Vector2 mousePos = GetMousePosition();
-            
+
             // Calculate scaled dimensions
             int scaledMargin = (int)(margin * scaleFactor);
             int buttonWidth = (int)(200 * scaleFactor);
@@ -363,51 +402,69 @@ public:
             int startButtonY = buttonY + buttonHeight + scaledMargin;
 
             // Check mode selection buttons
-            if (mousePos.x >= scaledMargin && mousePos.x <= scaledMargin + buttonWidth && 
-                mousePos.y >= scaledMargin && mousePos.y <= scaledMargin + buttonHeight) {
+            if (mousePos.x >= scaledMargin && mousePos.x <= scaledMargin + buttonWidth &&
+                mousePos.y >= scaledMargin && mousePos.y <= scaledMargin + buttonHeight)
+            {
                 switchMode(0);
-            } else if (mousePos.x >= scaledMargin + buttonWidth + buttonSpacing && 
-                       mousePos.x <= scaledMargin + 2 * buttonWidth + buttonSpacing && 
-                       mousePos.y >= scaledMargin && mousePos.y <= scaledMargin + buttonHeight) {
+            }
+            else if (mousePos.x >= scaledMargin + buttonWidth + buttonSpacing &&
+                     mousePos.x <= scaledMargin + 2 * buttonWidth + buttonSpacing &&
+                     mousePos.y >= scaledMargin && mousePos.y <= scaledMargin + buttonHeight)
+            {
                 switchMode(1);
-            } else if (mousePos.x >= scaledMargin + 2 * (buttonWidth + buttonSpacing) && 
-                       mousePos.x <= scaledMargin + 3 * buttonWidth + 2 * buttonSpacing && 
-                       mousePos.y >= scaledMargin && mousePos.y <= scaledMargin + buttonHeight) {
+            }
+            else if (mousePos.x >= scaledMargin + 2 * (buttonWidth + buttonSpacing) &&
+                     mousePos.x <= scaledMargin + 3 * buttonWidth + 2 * buttonSpacing &&
+                     mousePos.y >= scaledMargin && mousePos.y <= scaledMargin + buttonHeight)
+            {
                 switchMode(2);
             }
             // Check start button
-            else if (mousePos.x >= scaledMargin && mousePos.x <= scaledMargin + startButtonWidth && 
-                     mousePos.y >= startButtonY && mousePos.y <= startButtonY + startButtonHeight) {
+            else if (mousePos.x >= scaledMargin && mousePos.x <= scaledMargin + startButtonWidth &&
+                     mousePos.y >= startButtonY && mousePos.y <= startButtonY + startButtonHeight)
+            {
                 currentMode->startGame();
             }
         }
     }
 
-    void switchMode(int mode) {
+    void switchMode(int mode)
+    {
         delete currentMode;
         selectedMode = mode;
-        switch (mode) {
-            case 0: currentMode = new EasyMode(); break;
-            case 1: currentMode = new MediumMode(); break;
-            case 2: currentMode = new HardMode(); break;
+        switch (mode)
+        {
+        case 0:
+            currentMode = new EasyMode();
+            break;
+        case 1:
+            currentMode = new MediumMode();
+            break;
+        case 2:
+            currentMode = new HardMode();
+            break;
         }
     }
 
-    void update() {
+    void update()
+    {
         currentMode->updateTimer();
-        
-        if (!currentMode->getIsTyping() && currentMode->getIsStarted()) {
+
+        if (!currentMode->getIsTyping() && currentMode->getIsStarted())
+        {
             currentMode->startTyping();
         }
 
         int key = GetCharPressed();
-        if (key != 0) {
+        if (key != 0)
+        {
             currentMode->checkInput(key);
         }
     }
 };
-
-int main() {
+// Main
+int main()
+{
     const int initialWidth = 1000;
     const int initialHeight = 700;
 
@@ -417,8 +474,10 @@ int main() {
 
     TypingTracker tracker;
 
-    while (!WindowShouldClose()) {
-        if (IsWindowResized()) {
+    while (!WindowShouldClose())
+    {
+        if (IsWindowResized())
+        {
             tracker.updateScreenSize(GetScreenWidth(), GetScreenHeight());
         }
 
